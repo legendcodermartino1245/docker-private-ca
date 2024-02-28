@@ -1,0 +1,60 @@
+version: '3.8'
+services:
+
+  wordpress:
+    stdin_open: true
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+    image: wordpress-test
+
+    container_name: wordpress
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - wordpress:/var/www/html
+
+  db:
+    tty: true
+    stdin_open: true
+    image: mysql:8.0
+    restart: always
+    container_name: db
+    hostname: db
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    volumes:
+      - db:/var/lib/mysql
+  private_ca:
+    tty: true
+    stdin_open: true
+    image: alphine-test
+    volumes:
+      - ./private_ca/openssl-certs:/openssl-certs
+  intermeidate_ca:
+    tty: true
+    stdin_open: true
+    image: alphine-test-2
+    volumes:
+      - ./intermediate_ca/openssl-certs:/openssl-certs
+
+volumes:
+  wordpress:
+  db:
+  private_ca:
+
