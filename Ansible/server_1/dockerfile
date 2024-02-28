@@ -1,0 +1,13 @@
+FROM ubuntu
+RUN "apt" "update"
+RUN "apt" "clean"
+RUN "apt" "upgrade" "-y"
+RUN "apt" "install" "openssh-server" "-y" 
+RUN useradd -m user
+RUN mkdir -p /home/user/.ssh && ln -s /run/secrets/id_rsa_shared /home/user/.ssh/id_rsa_shared
+RUN ln -s /run/secrets/id_rsa_shared.pub /home/user/.ssh/id_rsa_shared.pub
+RUN ln -s /run/secrets/authorized_keys /home/user/.ssh/authorized_keys
+RUN chown -R user:user /home/user/.ssh
+#RUN echo "Host *\n\tStrictHostKeyChecking no\n" >> /home/user/.ssh/config
+#USER user
+#CMD ["/bin/bash"]

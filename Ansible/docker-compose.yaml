@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+
+  container1:
+    image: container_1-test
+    stdin_open: true
+    tty: true
+
+    container_name: container_1
+    restart: always
+  server1:
+    image: server1-test
+    stdin_open: true
+    tty: true
+    restart: always
+    container_name: server1
+    secrets:
+      - id_rsa_shared
+      - id_rsa_shared.pub
+      - authorized_keys
+    ports:
+      - 2022:22
+    
+secrets:
+  id_rsa_shared:
+    file: ~/.ssh/id_rsa_shared
+  id_rsa_shared.pub:
+    file: ~/.ssh/id_rsa_shared.pub
+  authorized_keys:
+    file: ~/.ssh/authorized_keys
+  
